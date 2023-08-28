@@ -1,15 +1,16 @@
 <template>
   <div id="app">
-    <el-button type="primary">el-button</el-button>
+    <Index></Index>
   </div>
 </template>
 
 <script>
+import Index from './components/Index.vue'
 
 export default {
   name: 'App',
   components: {
-    
+    Index
   }
 }
 </script>
