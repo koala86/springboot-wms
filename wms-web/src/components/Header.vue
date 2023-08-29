@@ -17,8 +17,7 @@
         ><i class="el-icon-arrow-down" style="margin-left: 5px"></i>
   
         <el-dropdown-menu slot="dropdown">
-          <el-dropdown-item @click.native="toUser">プロフィール</el-dropdown-item>
-  
+          <el-dropdown-item @click.native="toUser">プロフィール</el-dropdown-item>  
           <el-dropdown-item @click.native="logout">ログアウト</el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
