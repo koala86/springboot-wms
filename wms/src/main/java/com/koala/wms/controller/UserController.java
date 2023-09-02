@@ -38,8 +38,8 @@ public class UserController {
     }
 
     @PostMapping("/save")
-    public boolean save(@RequestBody User user) {
-        return userService.save(user);
+    public Result save(@RequestBody User user) {
+        return userService.save(user) ? Result.sucess() : Result.fail();
     }
 
     @PostMapping("/saveOrUpdate")

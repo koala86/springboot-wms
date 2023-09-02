@@ -11,7 +11,8 @@
 
       <el-select
         v-model="sex"
-        filterable placeholder="性別"
+        filterable
+        placeholder="性別"
         style="margin-left: 5px"
       >
         <el-option
@@ -28,6 +29,7 @@
       >
 
       <el-button type="success" @click="resetParam">reset</el-button>
+      <el-button type="success" @click="add">add</el-button>
     </div>
 
     <el-table
@@ -94,6 +96,41 @@
       :total="total"
     >
     </el-pagination>
+
+    <el-dialog
+      title="ユーザー追加"
+      :visible.sync="centerDialogVisible"
+      width="30%"
+      center
+    >
+      <el-form ref="form" :model="form" label-width="80px">
+        <el-form-item label="アカウント">
+          <el-input v-model="form.account"></el-input>
+        </el-form-item>
+        <el-form-item label="名前">
+          <el-input v-model="form.name"></el-input>
+        </el-form-item>
+        <el-form-item label="パスワード">
+          <el-input v-model="form.password"></el-input>
+        </el-form-item>
+        <el-form-item label="年齢">
+          <el-input v-model="form.age"></el-input>
+        </el-form-item>
+        <el-form-item label="性別">
+          <el-radio-group v-model="form.sex">
+            <el-radio :label="1">男</el-radio>
+            <el-radio :label="2">女</el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item label="電話">
+          <el-input v-model="form.phone"></el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="centerDialogVisible = false">戻る</el-button>
+        <el-button type="primary" @click="save">追加</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -105,29 +142,61 @@ export default {
       pageSize: 10,
       pageNum: 1,
       total: 0,
-      name: '',
-      sex: '',
-      sexs:[
+      name: "",
+      sex: "",
+      sexs: [
         {
-            value: '1',
-            label: '男'
+          value: "1",
+          label: "男",
         },
         {
-            value: '0',
-            label: '女'
-        }
-      ]
-    }
+          value: "2",
+          label: "女",
+        },
+      ],
+      centerDialogVisible: false,
+      form: {
+        account: "",
+        name: "",
+        password: "",
+        age: "",
+        sex: 2,
+        phone: "",
+      },
+    };
   },
   methods: {
+    add() {
+      this.centerDialogVisible = true;
+    },
+    save() {
+      this.$axios
+        .post(this.$httpUrl + "/user/save", this.form)
+        .then((res) => res.data)
+        .then((res) => {
+          console.log(res);
+          if (res.code == 200) {
+            this.centerDialogVisible = false;
+            this.$message({
+              message: "追加成功",
+              type: "success",
+            });
+          } else {
+            this.$message({
+              message: "追加失敗",
+              type: "fail",
+            });
+          }
+        });
+    },
     handleSizeChange(val) {
-        this.pageNum = 1
-        this.pageSize = val
-        this.loadPost()
+      this.pageNum = 1;
+      this.pageSize = val;
+      this.loadPost();
     },
     handleCurrentChange(val) {
-        this.pageNum = val
-        this.loadPost()
+      this.pageNum = val;
+      this.loadPost();
     },
     loadGet() {
       this.$axios.get(this.$httpUrl + "user/list").then((res) => {
@@ -135,30 +204,32 @@ export default {
       });
     },
     loadPost() {
-      this.$axios.post(this.$httpUrl + "/user/pageCustom", {
-        pageSize:this.pageSize,
-        pageNum:this.pageNum,
-        param: {
-            name:this.name,
+      this.$axios
+        .post(this.$httpUrl + "/user/pageCustom", {
+          pageSize: this.pageSize,
+          pageNum: this.pageNum,
+          param: {
+            name: this.name,
             sex: this.sex,
-        }
-      }).then(res=>res.data).then((res) => {
-        if (res.code==200) {
-            this.tableData = res.data
-            this.total = res.total
-        } else {
-            alert("データ取得失敗")
-        }
-      });
+          },
+        })
+        .then((res) => res.data)
+        .then((res) => {
+          if (res.code == 200) {
+            this.tableData = res.data;
+            this.total = res.total;
+          } else {
+            alert("データ取得失敗");
+          }
+        });
     },
     resetParam() {
-        this.name = '',
-        this.sex = ''
-    }
+      (this.name = ""), (this.sex = "");
+    },
   },
   beforeMount() {
-    this.loadPost()
-  }
+    this.loadPost();
+  },
 };
 </script>
 
