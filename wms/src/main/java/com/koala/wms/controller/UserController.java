@@ -1,6 +1,5 @@
 package com.koala.wms.controller;
 
-
 import java.util.HashMap;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,9 +8,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.koala.wms.common.QueryPageParam;
@@ -57,15 +56,20 @@ public class UserController {
     public Result pageCustom(@RequestBody QueryPageParam query) {
         HashMap<String, Object> param = query.getParam();
         String name = (String) param.get("name");
-
+        String sex = (String) param.get("sex");
         Page<User> page = new Page<>();
         page.setCurrent(query.getPageNum());
         page.setSize(query.getPageSize());
-
         LambdaQueryWrapper<User> lambdaQueryWrapper = Wrappers.lambdaQuery();
-        lambdaQueryWrapper.like(User::getName,name);
+        if (StringUtils.isNotBlank(name)) {
+            lambdaQueryWrapper.like(User::getName, name);
+        }
+        if (StringUtils.isNotBlank(sex)) {
+            lambdaQueryWrapper.eq(User::getSex, sex);
+        }
 
         IPage<User> result = userService.pageCustom(page, lambdaQueryWrapper);
+        System.out.println(result.getTotal());
         return Result.sucess(result.getRecords(), result.getTotal());
     }
 }

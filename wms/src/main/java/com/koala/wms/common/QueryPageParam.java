@@ -11,5 +11,5 @@ public class QueryPageParam {
     private int pageSize = PAGE_SIZE;
     private int pageNum = PAGE_NUM;
 
-    private HashMap<String,Object> param;
+    private HashMap<String,Object> param = new HashMap<>();
 }
