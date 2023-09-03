@@ -103,18 +103,18 @@
       width="30%"
       center
     >
-      <el-form ref="form" :model="form" label-width="80px">
-        <el-form-item label="アカウント">
+      <el-form ref="form" :rules="rules" :model="form" label-width="80px">
+        <el-form-item label="アカウント" prop="account">
           <el-input v-model="form.account"></el-input>
         </el-form-item>
-        <el-form-item label="名前">
+        <el-form-item label="名前" prop="name">
           <el-input v-model="form.name"></el-input>
         </el-form-item>
-        <el-form-item label="パスワード">
+        <el-form-item label="パスワード" prop="password">
           <el-input v-model="form.password"></el-input>
         </el-form-item>
-        <el-form-item label="年齢">
-          <el-input v-model="form.age"></el-input>
+        <el-form-item label="年齢" prop="age">
+          <el-input v-model="form.age" prop="age"></el-input>
         </el-form-item>
         <el-form-item label="性別">
           <el-radio-group v-model="form.sex">
@@ -122,7 +122,7 @@
             <el-radio :label="2">女</el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="電話">
+        <el-form-item label="携帯" prop="phone">
           <el-input v-model="form.phone"></el-input>
         </el-form-item>
       </el-form>
@@ -137,6 +137,13 @@
 <script>
 export default {
   data() {
+    let checkAge = (rule, value, callback) => {
+      if (value > 150) {
+        callback(new Error('年齢は多すぎる'));
+      } else {
+        callback();
+      }
+    };
     return {
       tableData: [],
       pageSize: 10,
@@ -163,6 +170,30 @@ export default {
         sex: 2,
         phone: "",
       },
+      rules: {
+          account: [
+            { required: true, message: 'アカウントを入力してください', trigger: 'blur' },
+            { min: 3, max: 8, message: '3~8文字', trigger: 'blur' }
+          ],
+          name: [
+            { required: true, message: '名前を入力してください', trigger: 'blur' },
+            { min: 3, max: 8, message: '3~8文字', trigger: 'blur' }
+          ],
+          password: [
+            { required: true, message: 'パスワードを入力してください', trigger: 'blur' },
+            { min: 3, max: 8, message: '3~8文字または数字', trigger: 'blur' }
+          ],
+          age: [
+            { required: true, message: '年齢を入力してください', trigger: 'blur' },
+            { min: 1, max: 3, message: '正しく入力してください', trigger: 'blur'},
+            { pattern: /^([1-9][0-9]*){1,3}$/, message: '年齢を正しく入力してください', trigger: 'blur'},
+            { validator: checkAge, trigger: 'blur'}
+          ],
+          phone: [
+            { required: true, message: '携帯番号を入力してください', trigger: 'blur' },
+            { pattern: /^0[7-9]0\d{8}$/, message: '携帯番号を正しく入力してください', trigger: 'blur'},
+          ],
+        }
     };
   },
   methods: {
