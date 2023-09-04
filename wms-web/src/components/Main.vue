@@ -103,7 +103,7 @@
       width="30%"
       center
     >
-      <el-form ref="form" :rules="rules" :model="form" label-width="80px">
+      <el-form ref="form" :rules="rules" :model="form" label-width="100px">
         <el-form-item label="アカウント" prop="account">
           <el-input v-model="form.account"></el-input>
         </el-form-item>
@@ -144,6 +144,18 @@ export default {
         callback();
       }
     };
+    let checkDuplicate = (rule, valuej, callback) => {
+      if (this.form.id) {
+        return callback();
+      }
+      this.$axios.get(this.$httpUrl + "/user/findByAccount?account=" + this.form.account).then(res=>res.data).then(res=>{
+        if (res.code != 200) {
+          return callback();
+        } else {
+          callback(new Error("重複しているアカウントです"));
+        }
+      })
+    };
     return {
       tableData: [],
       pageSize: 10,
@@ -169,11 +181,13 @@ export default {
         age: "",
         sex: 2,
         phone: "",
+        roleId: "1"
       },
       rules: {
           account: [
             { required: true, message: 'アカウントを入力してください', trigger: 'blur' },
-            { min: 3, max: 8, message: '3~8文字', trigger: 'blur' }
+            { min: 3, max: 8, message: '3~8文字', trigger: 'blur' },
+            { validator: checkDuplicate, trigger: 'blur'}
           ],
           name: [
             { required: true, message: '名前を入力してください', trigger: 'blur' },
@@ -197,15 +211,20 @@ export default {
     };
   },
   methods: {
+    restForm() {
+      this.$refs.form.resetFields();
+    },
     add() {
       this.centerDialogVisible = true;
+      this.$nextTick(()=>{
+        this.resetForm()
+      })
     },
     save() {
       this.$axios
         .post(this.$httpUrl + "/user/save", this.form)
         .then((res) => res.data)
         .then((res) => {
-          console.log(res);
           if (res.code == 200) {
             this.centerDialogVisible = false;
             this.$message({

@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -35,6 +36,12 @@ public class UserController {
     @GetMapping("/list")
     public List<User> list() {
         return userService.list();
+    }
+
+    @GetMapping("/findByAccount")
+    public Result findByAccount(@RequestParam String account) {
+        List<User> list = userService.lambdaQuery().eq(User::getAccount,account).list();
+        return list.size()>0 ? Result.sucess(list) : Result.fail();
     }
 
     @PostMapping("/save")
