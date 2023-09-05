@@ -80,9 +80,10 @@
       <el-table-column prop="phone" label="電話" width="180"> </el-table-column>
 
       <el-table-column prop="operate" label="操作">
-        <el-button size="small" type="success">編集</el-button>
-
-        <el-button size="small" type="danger">削除</el-button>
+        <template slot-scope="scope">
+          <el-button size="small" type="success" @click="update(scope.row)">編集</el-button>
+          <el-button size="small" type="danger" @click="del">削除</el-button>
+        </template>
       </el-table-column>
     </el-table>
 
@@ -211,8 +212,21 @@ export default {
     };
   },
   methods: {
-    restForm() {
+    resetForm() {
       this.$refs.form.resetFields();
+    },
+    update(row) {
+      this.centerDialogVisible = true;
+      this.$nextTick(() => {
+        this.form.id = row.id
+        this.form.account = row.account
+        this.form.name = row.name
+        this.form.password = ''
+        this.form.age = row.age + ''
+        this.form.sex = row.sex
+        this.form.phone = row.phone
+        this.form.roleId = row.roleId
+      })
     },
     add() {
       this.centerDialogVisible = true;
@@ -220,7 +234,7 @@ export default {
         this.resetForm()
       })
     },
-    save() {
+    doSave() {
       this.$axios
         .post(this.$httpUrl + "/user/save", this.form)
         .then((res) => res.data)
@@ -238,6 +252,40 @@ export default {
             });
           }
         });
+    },
+    doUpdate() {
+      this.$axios
+        .post(this.$httpUrl + "/user/update", this.form)
+        .then((res) => res.data)
+        .then((res) => {
+          if (res.code == 200) {
+            this.centerDialogVisible = false;
+            this.$message({
+              message: "追加成功",
+              type: "success",
+            });
+          } else {
+            this.$message({
+              message: "追加失敗",
+              type: "fail",
+            });
+          }
+        });
+    },
+    save() {
+      this.$refs.form.validate((valid) => {
+        if (valid) {
+          if (this.form.id) {
+            this.doUpdate();
+          } else {
+            this.doSave();
+          }
+          this.loadPost();
+        } else {
+          console.log('error submit!');
+          return false;
+        }
+      })
     },
     handleSizeChange(val) {
       this.pageNum = 1;

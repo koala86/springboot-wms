@@ -49,6 +49,11 @@ public class UserController {
         return userService.save(user) ? Result.sucess() : Result.fail();
     }
 
+    @PostMapping("/update")
+    public Result update(@RequestBody User user) {
+        return userService.updateById(user) ? Result.sucess() : Result.fail();
+    }
+
     @PostMapping("/saveOrUpdate")
     public boolean saveOrUpdate(@RequestBody User user) {
         return userService.saveOrUpdate(user);
