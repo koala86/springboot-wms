@@ -54,6 +54,11 @@ public class UserController {
         return userService.updateById(user) ? Result.sucess() : Result.fail();
     }
 
+    @GetMapping("/delete")
+    public Result delete(@RequestParam String id) {
+        return userService.removeById(id) ? Result.sucess() : Result.fail();
+    }
+
     @PostMapping("/saveOrUpdate")
     public boolean saveOrUpdate(@RequestBody User user) {
         return userService.saveOrUpdate(user);

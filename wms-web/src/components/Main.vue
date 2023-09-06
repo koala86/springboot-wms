@@ -81,8 +81,21 @@
 
       <el-table-column prop="operate" label="操作">
         <template slot-scope="scope">
-          <el-button size="small" type="success" @click="update(scope.row)">編集</el-button>
-          <el-button size="small" type="danger" @click="del">削除</el-button>
+          <el-button
+            size="small"
+            type="success"
+            style="margin: 5px"
+            @click="update(scope.row)"
+            >編集</el-button
+          >
+          <el-popconfirm
+            title="削除しますか？"
+            @onConfirm="del(scope.row.id)"
+            confirm-button-text="削除"
+            cancel-button-text="いいえ"
+          >
+            <el-button slot="reference" size="small" type="danger">削除</el-button>
+          </el-popconfirm>
         </template>
       </el-table-column>
     </el-table>
@@ -140,7 +153,7 @@ export default {
   data() {
     let checkAge = (rule, value, callback) => {
       if (value > 150) {
-        callback(new Error('年齢は多すぎる'));
+        callback(new Error("年齢は多すぎる"));
       } else {
         callback();
       }
@@ -149,13 +162,16 @@ export default {
       if (this.form.id) {
         return callback();
       }
-      this.$axios.get(this.$httpUrl + "/user/findByAccount?account=" + this.form.account).then(res=>res.data).then(res=>{
-        if (res.code != 200) {
-          return callback();
-        } else {
-          callback(new Error("重複しているアカウントです"));
-        }
-      })
+      this.$axios
+        .get(this.$httpUrl + "/user/findByAccount?account=" + this.form.account)
+        .then((res) => res.data)
+        .then((res) => {
+          if (res.code != 200) {
+            return callback();
+          } else {
+            callback(new Error("重複しているアカウントです"));
+          }
+        });
     };
     return {
       tableData: [],
@@ -182,57 +198,111 @@ export default {
         age: "",
         sex: 2,
         phone: "",
-        roleId: "1"
+        roleId: "1",
       },
       rules: {
-          account: [
-            { required: true, message: 'アカウントを入力してください', trigger: 'blur' },
-            { min: 3, max: 8, message: '3~8文字', trigger: 'blur' },
-            { validator: checkDuplicate, trigger: 'blur'}
-          ],
-          name: [
-            { required: true, message: '名前を入力してください', trigger: 'blur' },
-            { min: 3, max: 8, message: '3~8文字', trigger: 'blur' }
-          ],
-          password: [
-            { required: true, message: 'パスワードを入力してください', trigger: 'blur' },
-            { min: 3, max: 8, message: '3~8文字または数字', trigger: 'blur' }
-          ],
-          age: [
-            { required: true, message: '年齢を入力してください', trigger: 'blur' },
-            { min: 1, max: 3, message: '正しく入力してください', trigger: 'blur'},
-            { pattern: /^([1-9][0-9]*){1,3}$/, message: '年齢を正しく入力してください', trigger: 'blur'},
-            { validator: checkAge, trigger: 'blur'}
-          ],
-          phone: [
-            { required: true, message: '携帯番号を入力してください', trigger: 'blur' },
-            { pattern: /^0[7-9]0\d{8}$/, message: '携帯番号を正しく入力してください', trigger: 'blur'},
-          ],
-        }
+        account: [
+          {
+            required: true,
+            message: "アカウントを入力してください",
+            trigger: "blur",
+          },
+          { min: 3, max: 8, message: "3~8文字", trigger: "blur" },
+          { validator: checkDuplicate, trigger: "blur" },
+        ],
+        name: [
+          {
+            required: true,
+            message: "名前を入力してください",
+            trigger: "blur",
+          },
+          { min: 3, max: 8, message: "3~8文字", trigger: "blur" },
+        ],
+        password: [
+          {
+            required: true,
+            message: "パスワードを入力してください",
+            trigger: "blur",
+          },
+          { min: 3, max: 8, message: "3~8文字または数字", trigger: "blur" },
+        ],
+        age: [
+          {
+            required: true,
+            message: "年齢を入力してください",
+            trigger: "blur",
+          },
+          {
+            min: 1,
+            max: 3,
+            message: "正しく入力してください",
+            trigger: "blur",
+          },
+          {
+            pattern: /^([1-9][0-9]*){1,3}$/,
+            message: "年齢を正しく入力してください",
+            trigger: "blur",
+          },
+          { validator: checkAge, trigger: "blur" },
+        ],
+        phone: [
+          {
+            required: true,
+            message: "携帯番号を入力してください",
+            trigger: "blur",
+          },
+          {
+            pattern: /^0[7-9]0\d{8}$/,
+            message: "携帯番号を正しく入力してください",
+            trigger: "blur",
+          },
+        ],
+      },
     };
   },
   methods: {
     resetForm() {
       this.$refs.form.resetFields();
     },
+    del(id) {
+      console.log("???")
+      this.$axios
+        .get(this.$httpUrl + "/user/delete?id=" + id, this.form)
+        .then((res) => res.data)
+        .then((res) => {
+          if (res.code == 200) {
+            this.centerDialogVisible = false;
+            this.$message({
+              message: "削除成功",
+              type: "success",
+            });
+          } else {
+            this.$message({
+              message: "削除失敗",
+              type: "fail",
+            });
+          }
+        });
+      this.loadPost();
+    },
     update(row) {
       this.centerDialogVisible = true;
       this.$nextTick(() => {
-        this.form.id = row.id
-        this.form.account = row.account
-        this.form.name = row.name
-        this.form.password = ''
-        this.form.age = row.age + ''
-        this.form.sex = row.sex
-        this.form.phone = row.phone
-        this.form.roleId = row.roleId
-      })
+        this.form.id = row.id;
+        this.form.account = row.account;
+        this.form.name = row.name;
+        this.form.password = "";
+        this.form.age = row.age + "";
+        this.form.sex = row.sex;
+        this.form.phone = row.phone;
+        this.form.roleId = row.roleId;
+      });
     },
     add() {
       this.centerDialogVisible = true;
-      this.$nextTick(()=>{
-        this.resetForm()
-      })
+      this.$nextTick(() => {
+        this.resetForm();
+      });
     },
     doSave() {
       this.$axios
@@ -282,10 +352,10 @@ export default {
           }
           this.loadPost();
         } else {
-          console.log('error submit!');
+          console.log("error submit!");
           return false;
         }
-      })
+      });
     },
     handleSizeChange(val) {
       this.pageNum = 1;
