@@ -64,6 +64,13 @@ public class UserController {
         return userService.saveOrUpdate(user);
     }
 
+    @PostMapping("/login")
+    public Result login(@RequestBody User user) {
+        List<User> list = userService.lambdaQuery().eq(User::getAccount,user.getAccount())
+                            .eq(User::getPassword, user.getPassword()).list();
+        return list.size() > 0 ? Result.sucess(list.get(0)) : Result.fail();
+    }
+
     @GetMapping("/remove")
     public boolean remove(Integer id) {
         return userService.removeById(id);
