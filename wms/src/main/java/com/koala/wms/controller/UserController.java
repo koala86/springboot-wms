@@ -68,6 +68,7 @@ public class UserController {
     public Result login(@RequestBody User user) {
         List<User> list = userService.lambdaQuery().eq(User::getAccount,user.getAccount())
                             .eq(User::getPassword, user.getPassword()).list();
+        System.out.println(list);
         return list.size() > 0 ? Result.sucess(list.get(0)) : Result.fail();
     }
 

@@ -1,7 +1,7 @@
 <template>
 
 <el-container style="height: 100%; border: 0px solid #eee">
-    <el-aside :width="aside_width" style="background-color: rgb(238, 241, 246); margin-left: -1px;">
+    <el-aside :width="aside_width" style="height: 100vh;background-color: rgb(238, 241, 246); margin-left: -1px;">
         <Aside :isCollapse="isCollapse"></Aside>
     </el-aside>
 
@@ -10,7 +10,8 @@
             <Header @doCollapse="doCollapse" :icon="icon"></Header>
         </el-header>
         <el-main style="height: 100%;">
-            <Main></Main>
+            <!-- <Main></Main> -->
+            <router-view/>
         </el-main>
     </el-container>
 </el-container>
@@ -21,11 +22,10 @@
 
 import Aside from "./Aside.vue"
 import Header from "./Header.vue"
-import Main from "./Main.vue"
 
 export default {
     name: "Index",
-    components: {Aside,Header,Main},
+    components: {Aside,Header},
     data(){
         return {
             isCollapse: false,
