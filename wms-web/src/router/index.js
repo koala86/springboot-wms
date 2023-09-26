@@ -18,6 +18,22 @@ const routes = [
                     title: 'ホーム'
                 },
                 component: ()=>import('../components/Home')
+            },
+            {
+                path: '/Admin',
+                name: 'admin',
+                meta: {
+                    title: '管理員管理'
+                },
+                component: ()=>import('../components/admin/AdminManage.vue')
+            },
+            {
+                path: '/User',
+                name: 'user',
+                meta: {
+                    title: 'ユーザー管理'
+                },
+                component: ()=>import('../components/user/UserManage.vue')
             }
         ]
     }

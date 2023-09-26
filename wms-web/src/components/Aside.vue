@@ -1,41 +1,50 @@
 <template>
-    <el-menu
-      background-color="#545c64"
-      text-color="#fff"
-      active-text-color="#ffd04b"
-      style="height: 100%"
-      default-active="/Home"
-      :collapse="isCollapse"
-      :collapse-transition="false"
+  <el-menu
+    background-color="#545c64"
+    text-color="#fff"
+    active-text-color="#ffd04b"
+    style="height: 100%"
+    default-active="/Home"
+    :collapse="isCollapse"
+    :collapse-transition="false"
+    router
+  >
+    <el-menu-item
+      :index="'/' + item.menuClick"
+      v-for="(item, i) in menu"
+      :key="i"
     >
-      <el-menu-item index="/Home">
-        <i class="el-icon-s-home"></i>
-        <span slot="title">メイン</span>
-      </el-menu-item>
-      <el-menu-item index="/One">
-        <i class="el-icon-s-flag"></i>
-        <span slot="title">商品</span>
-      </el-menu-item>
-      <el-menu-item index="/Two">
-        <i class="el-icon-s-opportunity"></i>
-        <span slot="title">地域</span>
-      </el-menu-item>
-    </el-menu>
-  </template>
+      <i :class="item.menuIcon"></i>
+      <span slot="title">{{ item.menuName }}</span>
+    </el-menu-item>
+  </el-menu>
+</template>
   
   <script>
-      export default {
-      data() {
-          return {
-          // isCollapse:false
-          };
-      },
-  
-      props: {
-          isCollapse: Boolean,
+export default {
+  data() {
+    return {
+      // isCollapse:false
+      menu: [
+        {
+          menuClick: 'Admin',
+          menuName: '管理員管理',
+          menuIcon: 'el-icon-s-custom'
         },
-      };
-  </script>
+        {
+          menuClick: 'User',
+          menuName: 'ユーザー管理',
+          menuIcon: 'el-icon-user-solid'
+        }
+      ]
+    };
+  },
+
+  props: {
+    isCollapse: Boolean,
+  },
+};
+</script>
   
   <style>
-  </style>
+</style>
