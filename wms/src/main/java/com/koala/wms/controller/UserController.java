@@ -2,6 +2,8 @@ package com.koala.wms.controller;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,7 +18,9 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.koala.wms.common.QueryPageParam;
 import com.koala.wms.common.Result;
+import com.koala.wms.entity.Menu;
 import com.koala.wms.entity.User;
+import com.koala.wms.service.IMenuService;
 import com.koala.wms.service.IUserService;
 
 /**
@@ -32,6 +36,8 @@ import com.koala.wms.service.IUserService;
 public class UserController {
     @Autowired
     private IUserService userService;
+    @Autowired
+    private IMenuService menuService;
 
     @GetMapping("/list")
     public List<User> list() {
@@ -68,7 +74,15 @@ public class UserController {
     public Result login(@RequestBody User user) {
         List<User> list = userService.lambdaQuery().eq(User::getAccount,user.getAccount())
                             .eq(User::getPassword, user.getPassword()).list();
-        System.out.println(list);
+        if (list.size() >0) {
+            User loginUser = list.get(0);
+            List<Menu> menuList = menuService.lambdaQuery().like(Menu::getMenuright,loginUser.getRoleId()).list();
+            Map<String, Object> resultMap = new HashMap<String,Object>();
+            resultMap.put("user", loginUser);
+            resultMap.put("menu", menuList);
+            System.out.println(resultMap);
+            return Result.sucess(resultMap);
+        }
         return list.size() > 0 ? Result.sucess(list.get(0)) : Result.fail();
     }
 

@@ -9,13 +9,18 @@
     :collapse-transition="false"
     router
   >
+    <el-menu-item index="/Home">
+      <i class="el-icon-s-home"></i>
+      <span slot="title">メイン</span>
+    </el-menu-item>
+
     <el-menu-item
-      :index="'/' + item.menuClick"
+      :index="'/' + item.menuclick"
       v-for="(item, i) in menu"
       :key="i"
     >
-      <i :class="item.menuIcon"></i>
-      <span slot="title">{{ item.menuName }}</span>
+      <i :class="item.menuicon"></i>
+      <span slot="title">{{ item.menuname }}</span>
     </el-menu-item>
   </el-menu>
 </template>
@@ -24,22 +29,15 @@
 export default {
   data() {
     return {
-      // isCollapse:false
-      menu: [
-        {
-          menuClick: 'Admin',
-          menuName: '管理員管理',
-          menuIcon: 'el-icon-s-custom'
-        },
-        {
-          menuClick: 'User',
-          menuName: 'ユーザー管理',
-          menuIcon: 'el-icon-user-solid'
-        }
-      ]
     };
   },
-
+  computed: {
+    "menu": {
+      get() {
+        return this.$store.state.menu
+      }
+    }
+  },
   props: {
     isCollapse: Boolean,
   },

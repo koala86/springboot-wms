@@ -1,7 +1,8 @@
 <template>
     <div style="...">
-        <h1>{{ 'ようこそ' + user.name }}</h1>
-        <el-descriptions>
+        <h1>hello!</h1>
+        <!-- <h1>{{ 'ようこそ' + user }}</h1> -->
+        <!-- <el-descriptions>
             <el-descriptions-item>
                 <template slot="label">
                     <i class="el-icon-s-custom"></i>
@@ -32,27 +33,27 @@
                 <el-tag type="success"
                         disable-transitions>{{ user.roleId==0?"ルート管理員":(user.roleId==1?"管理員":"ユーザー") }}</el-tag>
             </el-descriptions-item>
-        </el-descriptions>
-        <DateUtils></DateUtils>
+        </el-descriptions> -->
+        <!-- <DateUtils></DateUtils>  -->
     </div>
 </template>
 
 <script>
-    import DateUtils from "./DateUtils";
-    export default {
-        components: {DateUtils},
-        data() {
-            return {
-                user:{}
-            }
-        },
-        computed: {
+    // import DateUtils from "./DateUtils";
+    // export default {
+    //     // components: {DateUtils},
+    //     data() {
+    //         return {
+    //             user:{}
+    //         }
+    //     },
+    //     computed: {
 
-        },
-        methods: {
-            init() {
-                this.user = JSON.parse(sessionStorage.getItem('CurUser'))
-            }
-        }
-    }
+    //     },
+    //     methods: {
+    //         init() {
+    //             this.user = JSON.parse(sessionStorage.getItem('CurUser'))
+    //         }
+    //     }
+    // }
 </script>
