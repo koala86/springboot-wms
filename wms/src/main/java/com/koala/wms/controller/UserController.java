@@ -96,6 +96,7 @@ public class UserController {
         HashMap<String, Object> param = query.getParam();
         String name = (String) param.get("name");
         String sex = (String) param.get("sex");
+        String roleId = (String) param.get("roleId");
         Page<User> page = new Page<>();
         page.setCurrent(query.getPageNum());
         page.setSize(query.getPageSize());
@@ -105,6 +106,9 @@ public class UserController {
         }
         if (StringUtils.isNotBlank(sex)) {
             lambdaQueryWrapper.eq(User::getSex, sex);
+        }
+        if (StringUtils.isNotBlank(roleId)) {
+            lambdaQueryWrapper.eq(User::getRoleId, roleId);
         }
 
         IPage<User> result = userService.pageCustom(page, lambdaQueryWrapper);
