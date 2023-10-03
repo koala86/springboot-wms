@@ -198,6 +198,8 @@ export default {
         storage: [
           {
             required: true,
+
+            
             message: "倉庫を選択してください",
             trigger: "blur",
           },

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.koala.wms.mapper.RecordMapper">
+    <sql id="Base_Column_List">
+        id, name, user_id, admin_id, count, createtime, remark
+    </sql>
+
+    <select id="pageCustom" resultType="com.koala.wms.DTO.RecordDTO">
+        select r.*,g.name goodsname,s.name storagename,t.name goodstypename,
+        (select u.name from user u where u.id=r.user_id) username,
+        (select u.name from user u where u.id=r.admin_id) adminname
+        from record r, goods g, storage s, goods_type t 
+        ${ew.customSqlSegment}
+    </select>
+
+    <resultMap id="BaseResultMap" type="com.koala.wms.entity.Record">
+        <id column="id" property="id"/>
+        <result column="goods" property="goods"/>
+        <result column="user_id" property="user_id"/>
+        <result column="admin_id" property="admin_id"/>
+        <result column="count" property="count"/>
+        <result column="createtime" property="createtime"/>
+        <result column="remark" property="remark"/>
+    </resultMap>
+</mapper>
