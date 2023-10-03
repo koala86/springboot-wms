@@ -18,8 +18,8 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.koala.wms.common.QueryPageParam;
 import com.koala.wms.common.Result;
-import com.koala.wms.entity.Storage;
-import com.koala.wms.service.IStorageService;
+import com.koala.wms.entity.GoodsType;
+import com.koala.wms.service.IGoodsTypeService;
 
 /**
  * <p>
@@ -27,28 +27,28 @@ import com.koala.wms.service.IStorageService;
  * </p>
  *
  * @author koala
- * @since 2023-10-02
+ * @since 2023-10-03
  */
 @RestController
-@RequestMapping("/storage")
-public class StorageController {
+@RequestMapping("/goods-type")
+public class GoodsTypeController {
 
     @Autowired
-    private IStorageService storageService;
+    private IGoodsTypeService goodsTypeService;
 
     @PostMapping("/save")
-    public Result save(@RequestBody Storage storage) {
-        return storageService.save(storage) ? Result.sucess() : Result.fail();
+    public Result save(@RequestBody GoodsType goodType) {
+        return goodsTypeService.save(goodType) ? Result.sucess() : Result.fail();
     }
 
     @PostMapping("/update")
-    public Result update(@RequestBody Storage storage) {
-        return storageService.updateById(storage) ? Result.sucess() : Result.fail();
+    public Result update(@RequestBody GoodsType goodType) {
+        return goodsTypeService.updateById(goodType) ? Result.sucess() : Result.fail();
     }
 
     @GetMapping("/delete")
     public Result delete(@RequestParam String id) {
-        return storageService.removeById(id) ? Result.sucess() : Result.fail();
+        return goodsTypeService.removeById(id) ? Result.sucess() : Result.fail();
     }
 
     @PostMapping("/pageCustom")
@@ -56,22 +56,23 @@ public class StorageController {
         HashMap<String, Object> param = query.getParam();
         String name = (String) param.get("name");
 
-        Page<Storage> page = new Page<>();
+        Page<GoodsType> page = new Page<>();
         page.setCurrent(query.getPageNum());
         page.setSize(query.getPageSize());
-        LambdaQueryWrapper<Storage> lambdaQueryWrapper = Wrappers.lambdaQuery();
+        LambdaQueryWrapper<GoodsType> lambdaQueryWrapper = Wrappers.lambdaQuery();
         if (StringUtils.isNotBlank(name)) {
-            lambdaQueryWrapper.like(Storage::getName, name);
+            lambdaQueryWrapper.like(GoodsType::getName, name);
         }
 
-        IPage<Storage> result = storageService.pageCustom(page, lambdaQueryWrapper);
+        IPage<GoodsType> result = goodsTypeService.pageCustom(page, lambdaQueryWrapper);
         System.out.println(result.getTotal());
         return Result.sucess(result.getRecords(), result.getTotal());
     }
 
     @GetMapping("/list")
     public Result list() {
-        List<Storage> list = storageService.list();
+        List<GoodsType> list = goodsTypeService.list();
         return Result.sucess(list);
     }
+
 }

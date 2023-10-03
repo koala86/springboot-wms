@@ -3,7 +3,7 @@
       <div style="margin-bottom: 5px">
         <el-input
           v-model="name"
-          placeholder="倉庫名を入力してください"
+          placeholder="商品分類名を入力してください"
           suffix-icon="el-icon-search"
           style="width: 200px"
           @keyup.enter.native="loadPost"
@@ -22,7 +22,7 @@
         :header-cell-style="{ background: '#f2f5fc', color: 'black' }"
       >
         <el-table-column prop="id" label="ID" width="60"> </el-table-column>
-        <el-table-column prop="name" label="倉庫名" width="120"> </el-table-column>
+        <el-table-column prop="name" label="分類名" width="120"> </el-table-column>
         <el-table-column prop="remark" label="注釈"> </el-table-column>
   
         <el-table-column prop="operate" label="操作">
@@ -58,13 +58,13 @@
       </el-pagination>
   
       <el-dialog
-        title="倉庫追加"
+        title="商品分類追加"
         :visible.sync="centerDialogVisible"
         width="30%"
         center
       >
         <el-form ref="form" :rules="rules" :model="form" label-width="100px">
-          <el-form-item label="倉庫名" prop="name">
+          <el-form-item label="分類名" prop="name">
             <el-input v-model="form.name"></el-input>
           </el-form-item>
           <el-form-item label="注釈" prop="remark">
@@ -98,7 +98,7 @@
           name: [
             {
               required: true,
-              message: "倉庫名を入力してください",
+              message: "分類名を入力してください",
               trigger: "blur",
             },
           ],
@@ -112,7 +112,7 @@
       del(id) {
         console.log(id)
         this.$axios
-          .get(this.$httpUrl + "/storage/delete?id=" + id, this.form)
+          .get(this.$httpUrl + "/goods-type/delete?id=" + id, this.form)
           .then((res) => res.data)
           .then((res) => {
             if (res.code == 200) {
@@ -146,7 +146,7 @@
       },
       doSave() {
         this.$axios
-          .post(this.$httpUrl + "/storage/save", this.form)
+          .post(this.$httpUrl + "/goods-type/save", this.form)
           .then((res) => res.data)
           .then((res) => {
             if (res.code == 200) {
@@ -165,7 +165,7 @@
       },
       doUpdate() {
         this.$axios
-          .post(this.$httpUrl + "/storage/update", this.form)
+          .post(this.$httpUrl + "/goods-type/update", this.form)
           .then((res) => res.data)
           .then((res) => {
             if (res.code == 200) {
@@ -208,7 +208,7 @@
       },
       loadPost() {
         this.$axios
-          .post(this.$httpUrl + "/storage/pageCustom", {
+          .post(this.$httpUrl + "/goods-type/pageCustom", {
             pageSize: this.pageSize,
             pageNum: this.pageNum,
             param: {
