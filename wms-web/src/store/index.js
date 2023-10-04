@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import router, { resetRouter } from '@/router'
+import createPersistedState from 'vuex-persistedstate'
 Vue.use(Vuex)
 
 function addNewRouter(menuList) {
@@ -34,11 +35,15 @@ export default new Vuex.Store({
         setMenu(state,menuList) {
             state.menu = menuList
             addNewRouter(menuList)
-        }
+        },
+        setRouter(state,menuList) {
+            addNewRouter(menuList)
+        },
     },
     getters: {
         getMenu(state) {
             return state.menu
         }
-    }
+    },
+    plugins: [createPersistedState()]
 })
