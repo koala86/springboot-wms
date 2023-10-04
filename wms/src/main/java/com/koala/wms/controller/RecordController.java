@@ -1,6 +1,7 @@
 package com.koala.wms.controller;
 
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +15,9 @@ import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.koala.wms.common.QueryPageParam;
 import com.koala.wms.common.Result;
+import com.koala.wms.entity.Goods;
 import com.koala.wms.entity.Record;
+import com.koala.wms.service.IGoodsService;
 import com.koala.wms.service.IRecordService;
 
 /**
@@ -31,6 +34,9 @@ public class RecordController {
 
     @Autowired
     private IRecordService recordService;
+
+    @Autowired
+    private IGoodsService goodsService;
 
     @PostMapping("/pageCustom")
     public Result pageCustom(@RequestBody QueryPageParam query) {
@@ -57,5 +63,22 @@ public class RecordController {
         IPage<Record> result = recordService.pageCustom(page, queryWrapper);
         System.out.println(result.getTotal());
         return Result.sucess(result.getRecords(), result.getTotal());
+    }
+
+    @PostMapping("/save")
+    public Result save(@RequestBody Record record) {
+        Goods goods = goodsService.getById(record.getGoods());
+        int n = record.getCount();
+        //outbound
+        if ("2".equals(record.getAction())) {
+            n = -n;
+            record.setCount(n);
+        }
+        int num = goods.getCount() + n;
+        goods.setCount(num);
+        goodsService.updateById(goods);
+        record.setCreatetime(LocalDateTime.now());
+
+        return recordService.save(record) ? Result.sucess() : Result.fail();
     }
 }

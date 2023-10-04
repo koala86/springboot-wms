@@ -43,11 +43,16 @@
 
       <el-button type="success" @click="resetParam">reset</el-button>
       <el-button type="success" @click="add">add</el-button>
+      <el-button type="success" @click="inbound">inbound</el-button>
+      <el-button type="success" @click="outbound">outbound</el-button>
     </div>
 
     <el-table
       :data="tableData"
       :header-cell-style="{ background: '#f2f5fc', color: 'black' }"
+      border 
+      highlight-current-row
+      @current-change="selectCurrentChange"
     >
       <el-table-column prop="id" label="ID" width="60"> </el-table-column>
       <el-table-column prop="name" label="商品名" width="120">
@@ -155,11 +160,48 @@
         <el-button type="primary" @click="save">追加</el-button>
       </span>
     </el-dialog>
+
+    <el-dialog
+      title="入庫操作"
+      :visible.sync="inboundDialogVisible"
+      width="30%"
+      center
+    >
+
+      <el-dialog width="70%" title="申請人選択" :visible.sync="innerVisible" append-to-body>
+        <SelectUser @doSelectUser="doSelectUser"></SelectUser>
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="innerVisible = false">cancel</el-button>
+          <el-button type="primary" @click="confirmUser">OK</el-button>
+        </span>
+      </el-dialog>
+
+      <el-form ref="inboundform" :rules="rules" :model="inboundform" label-width="100px">
+        <el-form-item label="商品名">
+          <el-input v-model="inboundform.goodsname" readonly></el-input>
+        </el-form-item>
+        <el-form-item label="申請人">
+          <el-input v-model="inboundform.username" readonly @click.native="selectUser"></el-input>
+        </el-form-item>
+        <el-form-item label="商品数" prop="count">
+          <el-input v-model="inboundform.count"></el-input>
+        </el-form-item>
+        <el-form-item label="注釈" prop="remark">
+          <el-input type="textarea" v-model="inboundform.remark"></el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="inboundDialogVisible = false">戻る</el-button>
+        <el-button type="primary" @click="doInbound">追加</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
   
   <script>
+  import SelectUser from "../user/SelectUser"
 export default {
+  components: {SelectUser},
   data() {
     let checkCount = (rule, value, callback) => {
       if (value > 9999) {
@@ -169,6 +211,7 @@ export default {
       }
     };
     return {
+      user: JSON.parse(sessionStorage.getItem('CurUser')),
       storageData: [],
       goodstypeData: [],
       tableData: [],
@@ -179,6 +222,10 @@ export default {
       storage: "",
       goodstype: "",
       centerDialogVisible: false,
+      inboundDialogVisible: false,
+      innerVisible: false,
+      currentRow: {},
+      tempUser: {},
       form: {
         id: "",
         name: "",
@@ -186,6 +233,18 @@ export default {
         goodsType: "",
         count: "",
         remark: "",
+      },
+      inboundform: {
+        goods: '',
+        goodsname: '',
+        count: '',
+        userId: '',
+        adminId: '',
+        remark: '',
+        action: '1'
+      },
+      inboundrules: {
+
       },
       rules: {
         name: [
@@ -228,6 +287,17 @@ export default {
     };
   },
   methods: {
+    doSelectUser(val) {
+      this.tempUser = val
+    },
+    confirmUser() {
+      this.inboundform.username = this.tempUser.name
+      this.inboundform.userId = this.tempUser.id
+      this.innerVisible = false
+    },
+    selectCurrentChange(val) {
+        this.currentRow = val;
+    },
     formatStorage(row) {
       let temp = this.storageData.find((item) => {
         return item.id == row.storage;
@@ -242,6 +312,9 @@ export default {
     },
     resetForm() {
       this.$refs.form.resetFields();
+    },
+    resetInboundForm() {
+      this.$refs.inboundform.resetFields();
     },
     del(id) {
       console.log(id);
@@ -279,7 +352,39 @@ export default {
       this.centerDialogVisible = true;
       this.$nextTick(() => {
         this.resetForm();
+        this.form.id='';
       });
+    },
+    inbound() {
+      if (!this.currentRow.id) {
+        alert('商品を選択してください');
+        return;
+      }
+      this.inboundDialogVisible = true;
+      this.$nextTick(() => {
+        this.resetInboundForm();
+      });
+      this.inboundform.goodsname = this.currentRow.name
+      this.inboundform.goods = this.currentRow.id
+      this.inboundform.adminId = this.user.id
+      this.inboundform.action='1'
+    },
+    outbound() {
+      if (!this.currentRow.id) {
+        alert('商品を選択してください');
+        return;
+      }
+      this.inboundDialogVisible = true;
+      this.$nextTick(() => {
+        this.resetInboundForm();
+      });
+      this.inboundform.goodsname = this.currentRow.name
+      this.inboundform.goods = this.currentRow.id
+      this.inboundform.adminId = this.user.id
+      this.inboundform.action='2'
+    },
+    selectUser() {
+      this.innerVisible = true;
     },
     doSave() {
       this.$axios
@@ -292,6 +397,30 @@ export default {
               message: "追加成功",
               type: "success",
             });
+            this.loadPost()
+            this.resetForm()
+          } else {
+            this.$message({
+              message: "追加失敗",
+              type: "fail",
+            });
+          }
+        });
+    },
+    doInbound() {
+      this.$axios
+        .post(this.$httpUrl + "/record/save", this.inboundform)
+        .then((res) => res.data)
+        .then((res) => {
+          if (res.code == 200) {
+            this.inboundDialogVisible = false;
+            this.$message({
+              message: "追加成功",
+              type: "success",
+            });
+            
+            this.loadPost()
+            this.resetInboundForm()
           } else {
             this.$message({
               message: "追加失敗",

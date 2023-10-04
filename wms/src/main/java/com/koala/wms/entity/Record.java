@@ -1,6 +1,7 @@
 package com.koala.wms.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import java.time.LocalDateTime;
 import java.io.Serializable;
@@ -36,5 +37,6 @@ public class Record implements Serializable {
 
     private String remark;
 
-
+    @TableField(exist = false)
+    private String action;
 }
