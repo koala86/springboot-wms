@@ -3,7 +3,6 @@ package com.koala.wms.controller;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -44,12 +43,19 @@ public class RecordController {
         String name = (String) param.get("name");
         String goodstype = (String) param.get("goodstype");
         String storage = (String) param.get("storage");
+        String roleId = (String) param.get("roleId");
+        String userId = (String) param.get("userId");
 
         Page<Record> page = new Page<>();
         page.setCurrent(query.getPageNum());
         page.setSize(query.getPageSize());
         QueryWrapper<Record> queryWrapper = new QueryWrapper<>();
         queryWrapper.apply("r.goods=g.id and g.storage=s.id and g.goods_type=t.id");
+
+        if ("2".equals(roleId)) {
+            queryWrapper.apply("r.user_id=" + userId);
+        }
+
         if (StringUtils.isNotBlank(name) && !"null".equals(name)) {
             queryWrapper.like("g.name",name);
         }

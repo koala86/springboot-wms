@@ -87,6 +87,7 @@
   export default {
     data() {
       return {
+        user: JSON.parse(sessionStorage.getItem('CurUser')),
         storageData: [],
         goodstypeData: [],
         tableData: [],
@@ -141,6 +142,8 @@
               name: this.name,
               goodstype: this.goodstype + "",
               storage: this.storage + "",
+              roleId: this.user.roleId + "",
+              userId: this.user.id + ""
             },
           })
           .then((res) => res.data)

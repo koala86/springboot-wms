@@ -42,9 +42,9 @@
       >
 
       <el-button type="success" @click="resetParam">reset</el-button>
-      <el-button type="success" @click="add">add</el-button>
-      <el-button type="success" @click="inbound">inbound</el-button>
-      <el-button type="success" @click="outbound">outbound</el-button>
+      <el-button type="primary" @click="add" v-if="user.roleId!=2">add</el-button>
+      <el-button type="primary" @click="inbound" v-if="user.roleId!=2">inbound</el-button>
+      <el-button type="primary" @click="outbound" v-if="user.roleId!=2">outbound</el-button>
     </div>
 
     <el-table
@@ -74,7 +74,7 @@
       <el-table-column prop="count" label="数量" width="120"> </el-table-column>
       <el-table-column prop="remark" label="注釈"> </el-table-column>
 
-      <el-table-column prop="operate" label="操作">
+      <el-table-column prop="operate" label="操作" v-if="user.roleId!=2">
         <template slot-scope="scope">
           <el-button
             size="small"
